@@ -20,6 +20,7 @@ def loadCSV (fileName):
     dataFilePath = os.path.join(dataDirectory, fileName)
     return pd.read_csv(dataFilePath)
 
+#This funtion is used to preview the data in the given dataset
 def previewData (dataSet):
     print(dataSet.head())
     print("\n")
@@ -43,13 +44,15 @@ def getStatisticsOfData (dataSet):
     checkForMissingValues(dataSet)
     print("\n")
     
+#This funtion is used to handle the missing value in the features, in the 
+#given examples
 def handleMissingValues (features):
-    from sklearn.preprocessing import Imputer
-    imputer = Imputer(missing_values='NaN',strategy='mean',axis=0)
+    from sklearn.impute import SimpleImputer
+    imputer = SimpleImputer(missing_values=np.nan,strategy='mean')
     imputer.fit(features)
     imputedFeatures = imputer.fit_transform(features)
     return imputedFeatures
-    
+ 
 #Define file names and call loadCSV to load the CSV files
 dataFile = "kc_house_data.csv"
 dataSet = loadCSV(dataFile)
@@ -72,7 +75,7 @@ x = np.array(selectedFeatures)
 y = np.array(price)
 
 #Splitting the data into Train and Test
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 xtrain, xtest, ytrain, ytest = train_test_split(x,y,test_size=0.25,random_state=0)
 
 #Fitting simple linear regression to the Training Set
@@ -82,12 +85,20 @@ regressor.fit(xtrain, ytrain)
 #Predicting the prices
 pricePredictions = regressor.predict(xtest)
 
-# The coefficients
-print 'Coefficients: ', regressor.coef_
+print ('Input features \n',xtest)
+print ('\n')
+print ('Predicted Output \n',pricePredictions)
+print ('\n')
+#The coefficients / the linear regression weights
+print ('Coefficients: ', regressor.coef_)
+print ('\n')
+#Calculating the Mean of the squared error
 from sklearn.metrics import mean_squared_error
-print "Mean squared error: ",mean_squared_error(ytest, pricePredictions)
+print ("Mean squared error: ",mean_squared_error(ytest, pricePredictions))
+print ('\n')
+#Finding out the accuracy of the model
 from sklearn.metrics import r2_score
 accuracyMeassure = r2_score(ytest, pricePredictions)
-print "Accuracy of model is {}%".format(accuracyMeassure*100)
+print ("Accuracy of model is {} %".format(accuracyMeassure*100))
 
-#TODO : I will have to work on the Visualization techniques
+#TODO Need to implement the visualization part
